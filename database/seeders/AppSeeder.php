@@ -72,6 +72,7 @@ class AppSeeder extends Seeder
                         $article->categorie_article_id = $categorie->id;
                         $article->article = $faker->text(15);
                         $article->description = $faker->text(100);
+                        $article->image = 'tmp/' . rand(1, 20) . ".jpg";
                         $article->save();
                     }
                 }

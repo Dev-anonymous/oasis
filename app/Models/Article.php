@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $description
  * @property float|null $prix
  * @property Carbon|null $date
+ * @property string|null $image
  * 
  * @property CategorieArticle $categorie_article
  * @property Devise $devise
@@ -48,7 +49,8 @@ class Article extends Model
 		'article',
 		'description',
 		'prix',
-		'date'
+		'date',
+		'image'
 	];
 
 	public function categorie_article()
