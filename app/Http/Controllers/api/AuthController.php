@@ -64,13 +64,13 @@ class AuthController extends Controller
         $data = $validator->validate();
         $login = $data['login'];
         if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
-            $_ = ['password' => $data['password'], 'email' => $login, 'role' => 'client'];
+            $_ = ['password' => $data['password'], 'email' => $login];
             if (Auth::attempt($_, request('remember-me') ? true : false)) {
                 $success = true;
             }
         } else if (is_numeric($login)) {
             $login = "+" . (float) $login;
-            $_ = ['password' => $data['password'], 'phone' => $login, 'role' => 'client'];
+            $_ = ['password' => $data['password'], 'phone' => $login];
             if (Auth::attempt($_, request('remember-me') ? true : false)) {
                 $success = true;
             }
@@ -86,7 +86,7 @@ class AuthController extends Controller
         $user = auth()->user();
         User::where(['id' => $user->id])->update(['derniere_connexion' => now()]);
         return $this->success([
-            'token' => $user->createToken('token_' . time())->accessToken,
+            'token' => $user->createToken('token_' . time())->plainTextToken,
         ], "Successful authentication.");
     }
 
