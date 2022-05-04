@@ -1,0 +1,11 @@
+
+1. php artisan migrate                       => a executer une seul fois apres creation de la bdd
+2. php artisan  db:seed --class=AppSeeder    => ajoute les donnees de test dans l'application (optionnel)
+
+3. php artisan serve  : demarre l'application
+
+
+#################################################
+les routes sont dans le fichier : routes/api.php
+
+pour afficher toutes les routes de l'application -->> php artisan route:list
