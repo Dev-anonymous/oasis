@@ -31,6 +31,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property Collection|CategorieArticle[] $categorie_articles
  * @property Collection|Commande[] $commandes
  * @property Collection|Commentaire[] $commentaires
+ * @property Collection|Compte[] $comptes
  * @property Collection|Message[] $messages
  * @property Collection|Panier[] $paniers
  * @property Collection|Publication[] $publications
@@ -41,57 +42,62 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-	protected $table = 'users';
+    protected $table = 'users';
 
-	protected $dates = [
-		'email_verified_at',
-		'derniere_connexion'
-	];
+    protected $dates = [
+        'email_verified_at',
+        'derniere_connexion'
+    ];
 
-	protected $hidden = [
-		'password',
-		'remember_token'
-	];
+    protected $hidden = [
+        'password',
+        'remember_token'
+    ];
 
-	protected $fillable = [
-		'name',
-		'email',
-		'email_verified_at',
-		'password',
-		'remember_token',
-		'user_role',
-		'derniere_connexion',
-		'phone',
-		'avatar'
-	];
+    protected $fillable = [
+        'name',
+        'email',
+        'email_verified_at',
+        'password',
+        'remember_token',
+        'user_role',
+        'derniere_connexion',
+        'phone',
+        'avatar'
+    ];
 
-	public function categorie_articles()
-	{
-		return $this->hasMany(CategorieArticle::class, 'users_id');
-	}
+    public function categorie_articles()
+    {
+        return $this->hasMany(CategorieArticle::class, 'users_id');
+    }
 
-	public function commandes()
-	{
-		return $this->hasMany(Commande::class, 'users_id');
-	}
+    public function commandes()
+    {
+        return $this->hasMany(Commande::class, 'users_id');
+    }
 
-	public function commentaires()
-	{
-		return $this->hasMany(Commentaire::class, 'users_id');
-	}
+    public function commentaires()
+    {
+        return $this->hasMany(Commentaire::class, 'users_id');
+    }
 
-	public function messages()
-	{
-		return $this->hasMany(Message::class, 'users_id');
-	}
+    public function comptes()
+    {
+        return $this->hasMany(Compte::class, 'users_id');
+    }
 
-	public function paniers()
-	{
-		return $this->hasMany(Panier::class, 'users_id');
-	}
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'users_id');
+    }
 
-	public function publications()
-	{
-		return $this->hasMany(Publication::class, 'users_id');
-	}
+    public function paniers()
+    {
+        return $this->hasMany(Panier::class, 'users_id');
+    }
+
+    public function publications()
+    {
+        return $this->hasMany(Publication::class, 'users_id');
+    }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Compte;
 
 function getMimeType($filename)
 {
@@ -13,4 +14,35 @@ function getMimeType($filename)
         $mimetype = 'video';
     }
     return $mimetype;
+}
+
+function numeroCompte()
+{
+    $compte = Compte::all();
+    $n = $compte->count() + 1;
+
+    if ($n < 10) {
+        $c = "C00$n";
+    } else if ($n >= 10 and $n < 100) {
+        $c = "C0$n";
+    } else {
+        $c = "C$n";
+    }
+    $c = $c . '.' . makeRand() . '.' . makeRand();
+    return $c;
+}
+
+function makeRand($max = 5)
+{
+    $max = (int) $max;
+    if (!$max or $max <= 0) {
+        return 0;
+    }
+
+    $num = '';
+    while ($max > 0) {
+        $max--;
+        $num .= rand(1, 9);
+    }
+    return $num;
 }

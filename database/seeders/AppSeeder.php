@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\CategorieArticle;
 use App\Models\Commentaire;
 use App\Models\Devise;
+use App\Models\Operateur;
 use App\Models\Publication;
 use App\Models\User;
 use Faker\Factory as Faker;
@@ -22,6 +23,12 @@ class AppSeeder extends Seeder
      */
     public function run()
     {
+        foreach (['Mastercard', 'Visa', 'M-Pesa', 'Airtel Money', 'Orange Money'] as $e) {
+            if (!Operateur::where('operateur', $e)->first()) {
+                Operateur::create(['operateur' => $e]);
+            }
+        }
+
         $faker = Faker::create('fr_FR');
         foreach (['CDF', 'USD'] as $e) {
             if (!Devise::where('devise', $e)->first()) {

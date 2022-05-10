@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Compte;
 use App\Models\User;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ class AuthController extends Controller
                 'phone' => 'sometimes|min:10|numeric|regex:/(\+)[0-9]{10}/|unique:users,phone',
                 'password' => 'required|string|min:6|same:cpassword',
                 'cpassword' => 'required|string|min:6|',
+                'user_role' => 'sometimes|in:marchand,client',
             ]
         );
 
@@ -41,6 +43,10 @@ class AuthController extends Controller
         $data = $validator->validate();
         $data['password'] = Hash::make($data['password']);
         $user = User::create($data);
+        Compte::create([
+            'users_id' => $user->id,
+            'numero_compte' => numeroCompte()
+        ]);
 
         Auth::login($user);
         return $this->success([
