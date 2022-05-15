@@ -49,8 +49,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         ########### LISTE ARTICLE UTILISATEUR
         Route::get('/user/article', [ArticleController::class, 'userArticles']);
 
-        ########### SOLDE
+        ########### SOLDE OK
         Route::get('/solde/{deivse?}', [PayementController::class, 'solde']);
         Route::post('/appro', [PayementController::class, 'appro']);
+
     });
 });
