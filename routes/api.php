@@ -52,8 +52,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         ########### SOLDE OK
         Route::get('/solde/{deivse?}', [PayementController::class, 'solde']);
         Route::post('/appro', [PayementController::class, 'appro']);
-        ######### TEST GIT OK
-        ######### TEST GIT OK
-        ######### TEST GIT OK
+        ######### DERNIER COMMIT
     });
 });
