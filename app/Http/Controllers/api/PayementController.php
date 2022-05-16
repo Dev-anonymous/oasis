@@ -90,4 +90,16 @@ class PayementController extends Controller
         $msg = "Vous venez d'approvissionner votre votre d'un montant de $m, par {$op->operateur}.";
         return $this->success([], $msg);
     }
+
+    public function devise()
+    {
+        $dev = Devise::get(['id', 'devise']);
+        return $this->success($dev, "Liste devises");
+    }
+
+    public function operateur()
+    {
+        $dev = Operateur::get(['id', 'operateur']);
+        return $this->success($dev, "Liste operateurs");
+    }
 }
