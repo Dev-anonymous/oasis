@@ -23,16 +23,15 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property string|null $user_role
  * @property Carbon|null $derniere_connexion
  * @property string|null $phone
  * @property string|null $avatar
  *
  * @property Collection|CategorieArticle[] $categorie_articles
+ * @property Collection|Chat[] $chats
  * @property Collection|Commande[] $commandes
  * @property Collection|Commentaire[] $commentaires
  * @property Collection|Compte[] $comptes
- * @property Collection|Message[] $messages
  * @property Collection|Panier[] $paniers
  * @property Collection|Publication[] $publications
  *
@@ -60,7 +59,6 @@ class User extends Authenticatable
         'email_verified_at',
         'password',
         'remember_token',
-        'user_role',
         'derniere_connexion',
         'phone',
         'avatar'
@@ -69,6 +67,11 @@ class User extends Authenticatable
     public function categorie_articles()
     {
         return $this->hasMany(CategorieArticle::class, 'users_id');
+    }
+
+    public function chats()
+    {
+        return $this->hasMany(Chat::class, 'users_id');
     }
 
     public function commandes()
@@ -84,11 +87,6 @@ class User extends Authenticatable
     public function comptes()
     {
         return $this->hasMany(Compte::class, 'users_id');
-    }
-
-    public function messages()
-    {
-        return $this->hasMany(Message::class, 'users_id');
     }
 
     public function paniers()

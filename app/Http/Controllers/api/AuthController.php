@@ -4,13 +4,17 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Compte;
+use App\Models\Devise;
+use App\Models\Solde;
 use App\Models\User;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use PhpParser\Node\Stmt\TryCatch;
 
 class AuthController extends Controller
 {
@@ -42,16 +46,27 @@ class AuthController extends Controller
 
         $data = $validator->validate();
         $data['password'] = Hash::make($data['password']);
-        $user = User::create($data);
-        Compte::create([
-            'users_id' => $user->id,
-            'numero_compte' => numeroCompte()
-        ]);
 
-        Auth::login($user);
-        return $this->success([
-            'token' => $user->createToken('token_' . time())->plainTextToken,
-        ], "Account created successfully.");
+        DB::beginTransaction();
+        try {
+            $user = User::create($data);
+            $cmpt =  Compte::create([
+                'users_id' => $user->id,
+                'numero_compte' => numeroCompte()
+            ]);
+            $dev = Devise::all();
+            foreach ($dev as $d) {
+                Solde::create(['montant' => 0, 'devise_id' => $d->id, 'compte_id' => $cmpt->id]);
+            }
+            DB::commit();
+            Auth::login($user);
+            return $this->success([
+                'token' => $user->createToken('token_' . time())->plainTextToken,
+            ], "Account created successfully.");
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return $this->error('Erreur', 200, ['errors_msg' => ["Une erreur s'est produite lors de la création de votre compte."]]);
+        }
     }
 
     public function login(Request $request)

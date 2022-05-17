@@ -13,13 +13,13 @@ use Illuminate\Database\Eloquent\Model;
  * Class Message
  * 
  * @property int $id
- * @property int $users_id
+ * @property int $chat_id
  * @property string|null $message
- * @property int|null $to_uid
  * @property int|null $read
  * @property Carbon|null $date
+ * @property int|null $sentbyuser
  * 
- * @property User $user
+ * @property Chat $chat
  *
  * @package App\Models
  */
@@ -29,9 +29,9 @@ class Message extends Model
 	public $timestamps = false;
 
 	protected $casts = [
-		'users_id' => 'int',
-		'to_uid' => 'int',
-		'read' => 'int'
+		'chat_id' => 'int',
+		'read' => 'int',
+		'sentbyuser' => 'int'
 	];
 
 	protected $dates = [
@@ -39,15 +39,15 @@ class Message extends Model
 	];
 
 	protected $fillable = [
-		'users_id',
+		'chat_id',
 		'message',
-		'to_uid',
 		'read',
-		'date'
+		'date',
+		'sentbyuser'
 	];
 
-	public function user()
+	public function chat()
 	{
-		return $this->belongsTo(User::class, 'users_id');
+		return $this->belongsTo(Chat::class);
 	}
 }

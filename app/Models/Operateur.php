@@ -14,8 +14,9 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property int $id
  * @property string|null $operateur
+ * @property string|null $image
  * 
- * @property Collection|Approvisionnement[] $approvisionnements
+ * @property Collection|Transaction[] $transactions
  *
  * @package App\Models
  */
@@ -25,11 +26,12 @@ class Operateur extends Model
 	public $timestamps = false;
 
 	protected $fillable = [
-		'operateur'
+		'operateur',
+		'image'
 	];
 
-	public function approvisionnements()
+	public function transactions()
 	{
-		return $this->hasMany(Approvisionnement::class);
+		return $this->hasMany(Transaction::class);
 	}
 }

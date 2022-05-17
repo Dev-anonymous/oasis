@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Compte;
+use App\Models\Transaction;
 
 function getMimeType($filename)
 {
@@ -45,4 +46,20 @@ function makeRand($max = 5)
         $num .= rand(1, 9);
     }
     return $num;
+}
+
+function trans_id()
+{
+    $tr = Transaction::where('type', 'transfert')->get();
+    $n = $tr->count() + 1;
+
+    if ($n < 10) {
+        $c = "TRANS-00$n";
+    } else if ($n >= 10 and $n < 100) {
+        $c = "TRANS-0$n";
+    } else {
+        $c = "TRANS-$n";
+    }
+    $c = $c . '.' . makeRand() . '.' . makeRand();
+    return $c;
 }

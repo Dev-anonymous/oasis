@@ -10,25 +10,28 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Approvisionnement
+ * Class Transaction
  * 
  * @property int $id
  * @property int $compte_id
- * @property int $operateur_id
+ * @property int|null $operateur_id
  * @property int $devise_id
  * @property float|null $montant
+ * @property string|null $trans_id
+ * @property string|null $type
  * @property string|null $source
+ * @property string|null $data
  * @property Carbon|null $date
  * 
  * @property Compte $compte
  * @property Devise $devise
- * @property Operateur $operateur
+ * @property Operateur|null $operateur
  *
  * @package App\Models
  */
-class Approvisionnement extends Model
+class Transaction extends Model
 {
-	protected $table = 'approvisionnement';
+	protected $table = 'transaction';
 	public $timestamps = false;
 
 	protected $casts = [
@@ -47,7 +50,10 @@ class Approvisionnement extends Model
 		'operateur_id',
 		'devise_id',
 		'montant',
+		'trans_id',
+		'type',
 		'source',
+		'data',
 		'date'
 	];
 

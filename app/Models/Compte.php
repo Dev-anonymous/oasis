@@ -11,43 +11,43 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Compte
- * 
+ *
  * @property int $id
- * @property int $users_id
  * @property string|null $numero_compte
- * 
+ * @property int $users_id
+ *
  * @property User $user
- * @property Collection|Approvisionnement[] $approvisionnements
- * @property Collection|Transfert[] $transferts
+ * @property Collection|Solde[] $soldes
+ * @property Collection|Transaction[] $transactions
  *
  * @package App\Models
  */
 class Compte extends Model
 {
-	protected $table = 'compte';
-	public $timestamps = false;
+    protected $table = 'compte';
+    public $timestamps = false;
 
-	protected $casts = [
-		'users_id' => 'int'
-	];
+    protected $casts = [
+        'users_id' => 'int'
+    ];
 
-	protected $fillable = [
-		'users_id',
-		'numero_compte'
-	];
+    protected $fillable = [
+        'numero_compte',
+        'users_id'
+    ];
 
-	public function user()
-	{
-		return $this->belongsTo(User::class, 'users_id');
-	}
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'users_id');
+    }
 
-	public function approvisionnements()
-	{
-		return $this->hasMany(Approvisionnement::class);
-	}
+    public function soldes()
+    {
+        return $this->hasMany(Solde::class);
+    }
 
-	public function transferts()
-	{
-		return $this->hasMany(Transfert::class);
-	}
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

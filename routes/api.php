@@ -4,6 +4,7 @@ use App\Http\Controllers\api\ArticleController;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\CategorieArticleController;
 use App\Http\Controllers\api\CommentaireController;
+use App\Http\Controllers\api\MessageController;
 use App\Http\Controllers\api\PayementController;
 use App\Http\Controllers\api\PublicationController;
 use Illuminate\Http\Request;
@@ -28,31 +29,38 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/publication', [PublicationController::class, 'store']);
     Route::delete('/publication/{id}', [PublicationController::class, 'destroy']);
 
-    Route::middleware('marchand.mdlw')->group(function () {
-        ############# COMMENTAIRE
-        Route::post('/commentaire', [CommentaireController::class, 'store']);
-        Route::get('/commentaire/{publication_id}', [CommentaireController::class, 'show']);
-        Route::delete('/commentaire/{id}', [CommentaireController::class, 'destroy']);
+    ############# COMMENTAIRE
+    Route::post('/commentaire', [CommentaireController::class, 'store']);
+    Route::get('/commentaire/{publication_id}', [CommentaireController::class, 'show']);
+    Route::delete('/commentaire/{id}', [CommentaireController::class, 'destroy']);
 
-        ############# CATEGORIE ARTICLE
-        Route::post('/categorie-article', [CategorieArticleController::class, 'store']);
-        Route::get('/categorie-article', [CategorieArticleController::class, 'index']);
-        Route::delete('/categorie-article/{id}', [CategorieArticleController::class, 'destroy']);
+    ############# CATEGORIE ARTICLE
+    Route::post('/categorie-article', [CategorieArticleController::class, 'store']);
+    Route::get('/categorie-article', [CategorieArticleController::class, 'index']);
+    Route::delete('/categorie-article/{id}', [CategorieArticleController::class, 'destroy']);
 
-        ############# ARTICLE
-        Route::get('/article', [ArticleController::class, 'index']);
-        Route::get('/article/{id}', [ArticleController::class, 'show']);
-        Route::post('/article', [ArticleController::class, 'store']);
-        Route::post('/article/maj', [ArticleController::class, 'update']);
-        Route::delete('/article/{id}', [ArticleController::class, 'destroy']);
+    ############# ARTICLE
+    Route::get('/article', [ArticleController::class, 'index']);
+    Route::get('/article/{id}', [ArticleController::class, 'show']);
+    Route::post('/article', [ArticleController::class, 'store']);
+    Route::post('/article/maj', [ArticleController::class, 'update']);
+    Route::delete('/article/{id}', [ArticleController::class, 'destroy']);
 
-        ########### LISTE ARTICLE UTILISATEUR
-        Route::get('/user/article', [ArticleController::class, 'userArticles']);
+    ########### LISTE ARTICLE de l'UTILISATEUR
+    Route::get('/user/article', [ArticleController::class, 'userArticles']);
 
-        ########### SOLDE
-        Route::get('/solde/{devise?}', [PayementController::class, 'solde']);
-        Route::post('/appro', [PayementController::class, 'appro']);
-    });
+    ########### SOLDE & TRANSFERT
+    Route::get('/solde/{devise?}', [PayementController::class, 'solde']); //liste solde user
+    Route::post('/appro', [PayementController::class, 'appro']); //approvisionner mon compte
+    Route::post('/transfert', [PayementController::class, 'transfert']); //transfert argent vers un compte
+    Route::get('/transaction/{limite?}', [PayementController::class, 'transaction']); //liste transaction
+    Route::get('/numero-compte', [PayementController::class, 'numero_compte']); //affiche le numero de compte du user
+
+    ############# MESSAGE
+    Route::get('/chat', [MessageController::class, 'index']); // liste conversations recentes
+    Route::get('/message/{with_uid}', [MessageController::class, 'show']); // liste message avec un user
+    Route::post('/message', [MessageController::class, 'store']); //envoyer un message
+    Route::delete('/message/{id}', [MessageController::class, 'destroy']); // #######
 });
 
 ########### DEVISE & OPERATEUR
