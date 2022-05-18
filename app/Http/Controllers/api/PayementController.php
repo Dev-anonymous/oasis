@@ -149,7 +149,7 @@ class PayementController extends Controller
         Transaction::create($d);
         DB::commit();
 
-        $msg = "Vous venez d'effectuer une tranfert de $mont {$solde->devise->devise} vers le compte {$comptBenficiaire->numero_compte}({$comptBenficiaire->user->name}). TransID : $transid";
+        $msg = "Vous venez d'effectuer un tranfert de $mont {$solde->devise->devise} vers le compte {$comptBenficiaire->numero_compte}({$comptBenficiaire->user->name}). TransID : $transid";
         return $this->success([], $msg);
     }
 
