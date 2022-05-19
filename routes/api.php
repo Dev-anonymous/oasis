@@ -63,6 +63,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/message/{id}', [MessageController::class, 'destroy']); // #######
 });
 
-########### DEVISE & OPERATEUR
+########### DEVISE & OPERATEUR 
 Route::get('/devise', [PayementController::class, 'devise']);
 Route::get('/operateur', [PayementController::class, 'operateur']);
