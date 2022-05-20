@@ -5,9 +5,11 @@ namespace Database\Seeders;
 use App\Models\Article;
 use App\Models\CategorieArticle;
 use App\Models\Commentaire;
+use App\Models\Compte;
 use App\Models\Devise;
 use App\Models\Operateur;
 use App\Models\Publication;
+use App\Models\Solde;
 use App\Models\User;
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
@@ -42,12 +44,20 @@ class AppSeeder extends Seeder
 
                 $user = new User();
                 $user->name = $faker->name();
-                $user->user_role = "marchand";
                 $user->phone = $faker->e164PhoneNumber();
                 $user->email = $faker->email();
                 $user->password = '$2y$10$1xF4empii1JvxtLZSzYQ6eFz2y.xhuUetX8pjWN5f/kH9XoYePTfO'; // 123456
                 $user->avatar = '';
                 $user->save();
+
+                $cmpt =  Compte::create([
+                    'users_id' => $user->id,
+                    'numero_compte' => numeroCompte()
+                ]);
+                $dev = Devise::all();
+                foreach ($dev as $d) {
+                    Solde::create(['montant' => 0, 'devise_id' => $d->id, 'compte_id' => $cmpt->id]);
+                }
 
                 foreach (range(1, 50) as $c) {
                     $publication = new Publication();

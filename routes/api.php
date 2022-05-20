@@ -3,8 +3,10 @@
 use App\Http\Controllers\api\ArticleController;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\CategorieArticleController;
+use App\Http\Controllers\api\CommandeController;
 use App\Http\Controllers\api\CommentaireController;
 use App\Http\Controllers\api\MessageController;
+use App\Http\Controllers\api\PanierController;
 use App\Http\Controllers\api\PayementController;
 use App\Http\Controllers\api\PublicationController;
 use Illuminate\Http\Request;
@@ -61,8 +63,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/message/{with_uid}', [MessageController::class, 'show']); // liste message avec un user
     Route::post('/message', [MessageController::class, 'store']); //envoyer un message
     Route::delete('/message/{id}', [MessageController::class, 'destroy']); // #######
+
+    #==========   PANIER   =======#
+    Route::resource('panier', PanierController::class); // php artisan route:list
+    #######################################################
+
+    #==========   Commande   =======#
+    Route::get('/commande/{id?}', [CommandeController::class, 'commande']); // liste commandes / detail commande
+    Route::post('/commande', [CommandeController::class, 'passerCommande']); // passer la commande
+    #######################################################
 });
 
-########### DEVISE & OPERATEUR 
+########### DEVISE & OPERATEUR
 Route::get('/devise', [PayementController::class, 'devise']);
 Route::get('/operateur', [PayementController::class, 'operateur']);

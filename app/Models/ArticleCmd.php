@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $commande_id
  * @property int|null $article_id
- * @property int|null $boutique_id
+ * @property int|null $categorie_article_id
  * @property string|null $article
  * @property int|null $qte
  * @property float|null $prix
@@ -33,7 +33,7 @@ class ArticleCmd extends Model
 	protected $casts = [
 		'commande_id' => 'int',
 		'article_id' => 'int',
-		'boutique_id' => 'int',
+		'categorie_article_id' => 'int',
 		'qte' => 'int',
 		'prix' => 'float'
 	];
@@ -41,7 +41,7 @@ class ArticleCmd extends Model
 	protected $fillable = [
 		'commande_id',
 		'article_id',
-		'boutique_id',
+		'categorie_article_id',
 		'article',
 		'qte',
 		'prix',

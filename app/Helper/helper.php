@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\Commande;
 use App\Models\Compte;
 use App\Models\Transaction;
+use Illuminate\Support\Str;
 
 function getMimeType($filename)
 {
@@ -62,4 +64,32 @@ function trans_id()
     }
     $c = $c . '.' . makeRand() . '.' . makeRand();
     return $c;
+}
+
+function makeUserCommande($iduser, array $data)
+{
+    $nb_cmds = Commande::where('users_id', $iduser)->get()->count() + 1;
+    $data['numero'] = numeroCmd($iduser, $nb_cmds);
+    return Commande::create($data);
+}
+
+function numeroCmd($iduser, $n)
+{
+    switch ($n) {
+        case $n <= 9:
+            $n = "00$n";
+            break;
+        case $n >= 10 and $n <= 99:
+            $n = "0$n";
+            break;
+        default:
+            break;
+    }
+    return "C-$iduser-" . $n . '-' . strtoupper(Str::random(10));
+}
+
+function encodeFile($file)
+{
+    if (!is_file($file)) return;
+    return 'data:' . mime_content_type($file) . ';base64,' . base64_encode(file_get_contents($file));
 }
