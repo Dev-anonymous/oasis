@@ -9,6 +9,7 @@ use App\Http\Controllers\api\MessageController;
 use App\Http\Controllers\api\PanierController;
 use App\Http\Controllers\api\PayementController;
 use App\Http\Controllers\api\PublicationController;
+use App\Http\Controllers\api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -72,6 +73,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/commande/{id?}', [CommandeController::class, 'commande']); // liste commandes / detail commande
     Route::post('/commande', [CommandeController::class, 'passerCommande']); // passer la commande
     #######################################################
+
+    #==========   Users   =======#
+    Route::get('/users', [UserController::class, 'index']); //liste des utilisateurs
 });
 
 ########### DEVISE & OPERATEUR
