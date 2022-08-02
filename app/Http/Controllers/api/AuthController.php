@@ -109,6 +109,7 @@ class AuthController extends Controller
         User::where(['id' => $user->id])->update(['derniere_connexion' => now()]);
         return $this->success([
             'token' => $user->createToken('token_' . time())->plainTextToken,
+            'user' => $user,
         ], "Successful authentication.");
     }
 
