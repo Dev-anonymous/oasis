@@ -49,6 +49,7 @@ class AuthController extends Controller
 
         DB::beginTransaction();
         try {
+            $data['avatar'] = '';
             $user = User::create($data);
             $cmpt =  Compte::create([
                 'users_id' => $user->id,

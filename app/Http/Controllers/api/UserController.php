@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 use stdClass;
 
 class UserController extends Controller
@@ -74,9 +76,26 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update()
     {
-        //
+        $user = auth()->user();
+        $validator = Validator::make(request()->all(), [
+            'name' => 'sometimes|string|max:45|min:6',
+            'email' => 'sometimes|string|email|max:255|min:6|unique:users,email,' . $user->id,
+            'phone' => 'sometimes|string|min:10|numeric|regex:/(\+)[0-9]{10}/|unique:users,phone,' . $user->id,
+            'avatar' => 'sometimes|mimes:jpg,png,jpeg,gif|max:800|dimensions:min_width=300,min_height=300,max_width=500,max_height=500',
+        ]);
+        if ($validator->fails()) {
+            return $this->error('Validation error', 400, ['errors_msg' => $validator->errors()->all()]);
+        }
+        $data = $validator->validate();
+        if (request()->hasFile('avatar')) {
+            $image = request()->file('avatar')->store('avatar', 'public');
+            File::delete('storage/' . $user->avatar);
+            $data['avatar'] = $image;
+        }
+        User::where('id', $user->id)->update($data);
+        return $this->success([], "Vos données ont été mises à jour.");
     }
 
     /**
