@@ -98,6 +98,12 @@ class UserController extends Controller
         return $this->success([], "Vos données ont été mises à jour.");
     }
 
+    public function me()
+    {
+        $user = auth()->user();
+        return $this->success($user, "Profil");
+    }
+
     /**
      * Remove the specified resource from storage.
      *
