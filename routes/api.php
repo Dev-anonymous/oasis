@@ -78,6 +78,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/users', [UserController::class, 'index']); //liste des utilisateurs
     Route::post('/users', [UserController::class, 'update']); //update
     Route::get('/users/me', [UserController::class, 'me']); //profil
+    
 });
 
 ########### DEVISE & OPERATEUR
