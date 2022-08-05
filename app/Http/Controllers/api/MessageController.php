@@ -31,12 +31,14 @@ class MessageController extends Controller
 
         $tab = [];
         foreach ($chat as $e) {
+            $ch = Chat::where('users_id', $e)->orWhere('with_uid', $e)->first();
             $u = User::find($e);
 
             $el = new stdClass();
             $el->id = $u->id;
             $el->name = $u->name;
             $el->image = empty($u->avatar) ? asset('storage/users/default.png') : asset('storage/' . $u->avatar);
+            $el->chat_id = @$ch->id;
 
             array_push($tab, $el);
         }
@@ -54,7 +56,8 @@ class MessageController extends Controller
     {
         $validator = Validator::make(request()->all(), [
             'message' => 'required|max:600',
-            'with_uid' => 'required|exists:users,id'
+            'with_uid' => 'required|exists:users,id',
+            'chat_id' => 'sometimes|exists:chat,id'
         ]);
 
         if ($validator->fails()) {
@@ -68,14 +71,23 @@ class MessageController extends Controller
             return $this->error('Validation error', 400, ['errors_msg' => ['Invalide to_uid']]);
         }
 
-        $chat = Chat::where(['users_id' => $user->id, 'with_uid' => request()->with_uid])->first();
-        if (!$chat) {
+        $chat_id = (int) @$data['chat_id'];
+        $sentbyuser = 1;
+        if ($chat_id) {
+            $chat = Chat::where(['id' => $chat_id])->first();
+            if ($chat) {
+                if ($chat->users_id != $user->id) {
+                    $sentbyuser = 0;
+                }
+            } else {
+                $chat = Chat::create(['users_id' => $user->id, 'with_uid' => request()->with_uid]);
+            }
+        } else {
             $chat = Chat::create(['users_id' => $user->id, 'with_uid' => request()->with_uid]);
         }
 
-        $data['users_id'] = $user->id;
         $data['chat_id'] = $chat->id;
-        $data['sentbyuser'] = 1;
+        $data['sentbyuser'] = $sentbyuser;
         Message::create($data);
         return $this->success($data, "Message envoyé.");
     }
