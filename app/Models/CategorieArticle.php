@@ -15,9 +15,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string|null $categorie
  * @property string|null $image
- * @property int $users_id
+ * @property int $entreprise_id
  * 
- * @property User $user
+ * @property Entreprise $entreprise
  * @property Collection|Article[] $articles
  *
  * @package App\Models
@@ -28,18 +28,18 @@ class CategorieArticle extends Model
 	public $timestamps = false;
 
 	protected $casts = [
-		'users_id' => 'int'
+		'entreprise_id' => 'int'
 	];
 
 	protected $fillable = [
 		'categorie',
 		'image',
-		'users_id'
+		'entreprise_id'
 	];
 
-	public function user()
+	public function entreprise()
 	{
-		return $this->belongsTo(User::class, 'users_id');
+		return $this->belongsTo(Entreprise::class);
 	}
 
 	public function articles()

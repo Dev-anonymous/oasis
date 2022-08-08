@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use stdClass;
 
@@ -96,6 +97,28 @@ class UserController extends Controller
         }
         User::where('id', $user->id)->update($data);
         return $this->success([], "Vos données ont été mises à jour.");
+    }
+
+    public function update_pass()
+    {
+        $user = auth()->user();
+        $validator = Validator::make(request()->all(), [
+            'password' => 'required|string',
+            'newpassword' => 'required|string|min:3|',
+        ]);
+        if ($validator->fails()) {
+            return $this->error('Validation error', 400, ['msg' => $validator->errors()->all()]);
+        }
+
+        $cp = request()->password;
+        $np = request()->newpassword;
+
+        if (!(Hash::check($cp, $user->password))) {
+            return $this->error('Validation error', 400, ['msg' => ['Le mot de passe actuel que vous avez saisi est incorrect.']]);
+        }
+
+        User::where('id', $user->id)->update(['password' => Hash::make($np)]);
+        return $this->success(null, "Votre mot de passe a été modifié.");
     }
 
     public function me()

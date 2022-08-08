@@ -5,10 +5,12 @@ use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\CategorieArticleController;
 use App\Http\Controllers\api\CommandeController;
 use App\Http\Controllers\api\CommentaireController;
+use App\Http\Controllers\api\EntrepriseController;
 use App\Http\Controllers\api\MessageController;
 use App\Http\Controllers\api\PanierController;
 use App\Http\Controllers\api\PayementController;
 use App\Http\Controllers\api\PublicationController;
+use App\Http\Controllers\api\RecoveryController;
 use App\Http\Controllers\api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -77,10 +79,21 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     #==========   Users   =======#
     Route::get('/users', [UserController::class, 'index']); //liste des utilisateurs
     Route::post('/users', [UserController::class, 'update']); //update
+    Route::post('/users/pass', [UserController::class, 'update_pass']); //update password
     Route::get('/users/me', [UserController::class, 'me']); //profil
-    
+
+    #==========   Entreprise   =======#
+    Route::get('/entreprise', [EntrepriseController::class, 'index']);
+    Route::post('/entreprise', [EntrepriseController::class, 'store']);
+    Route::get('/entreprise/{entreprise}', [EntrepriseController::class, 'show']);
+    Route::delete('/entreprise/{entreprise}', [EntrepriseController::class, 'destroy']);
+    Route::post('/entreprise/update/{entreprise}', [EntrepriseController::class, 'update']);
 });
 
 ########### DEVISE & OPERATEUR
 Route::get('/devise', [PayementController::class, 'devise']);
 Route::get('/operateur', [PayementController::class, 'operateur']);
+
+#==========   Mot de passe oublié   =======#
+Route::post('/recovery', [RecoveryController::class, 'recovery']);
+Route::post('/recovery/check', [RecoveryController::class, 'check']);

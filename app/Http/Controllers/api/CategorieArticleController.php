@@ -20,14 +20,17 @@ class CategorieArticleController extends Controller
      */
     public function index()
     {
+        /** @var \App\Models\User $user **/
         $user = auth()->user();
-        $cat = $user->categorie_articles;
+        $ide = $user->entreprises()->pluck('id')->all();
 
+        $cat = CategorieArticle::whereIn('entreprise_id', $ide)->get();
         $tab = [];
         foreach ($cat as $e) {
             $a = new stdClass();
             $a->categorie = $e->categorie;
             $a->image = asset('storage/' . $e->image);
+            $a->entreprise = $e->entreprise->entreprise;
             array_push($tab, $a);
         }
         return $this->success($tab, 'Vos categories');
@@ -43,11 +46,20 @@ class CategorieArticleController extends Controller
     {
         $validator = Validator::make(request()->all(), [
             'categorie' => 'required|max:45',
+            'entreprise_id' => 'required|exists:entreprise,id',
             'image' => 'required|mimes:jpg,png,jpeg,gif|max:300',
         ]);
 
         if ($validator->fails()) {
             return $this->error('Validation error', 400, ['errors_msg' => $validator->errors()->all()]);
+        }
+
+        $ide = request()->entreprise_id;
+        /** @var \App\Models\User $user **/
+        $user = auth()->user();
+        $ent = $user->entreprises()->pluck('id')->all();
+        if (!in_array($ide, $ent)) {
+            abort(403);
         }
 
         $fichier = request()->file('image')->store('categorie-article', 'public');
@@ -93,7 +105,10 @@ class CategorieArticleController extends Controller
     {
         /** @var \App\Models\CategorieArticle $categorie **/
         $categorie = $id;
-        if (auth()->user()->id != $categorie->user->id) {
+        /** @var \App\Models\User $user **/
+        $user = auth()->user();
+        $ent = $user->entreprises()->pluck('id')->all();
+        if (!in_array($categorie->entreprise_id, $ent)) {
             abort(403);
         }
         File::delete('storage/' . $categorie->image);
