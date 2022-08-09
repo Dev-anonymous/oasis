@@ -36,7 +36,7 @@ class ArticleController extends Controller
             $f = $e->image;
             $a->image = asset('storage/' . $f);
 
-            $user = $e->categorie_article->user;
+            $user = $e->categorie_article->entreprise->user;
             $a->user = $user->name;
             $a->user_image = empty($user->avatar) ? asset('storage/users/default.png') : asset('storage/' . $user->avatar);
             $a->date = $e->date->format('Y-m-d H:i:s');

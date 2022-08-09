@@ -75,7 +75,8 @@ class RecoveryController extends Controller
     public function check()
     {
         $validator = Validator::make(request()->all(), [
-            'code' => 'required|',
+            // 'code' => 'required|',
+            'phone' => 'required|',
             'newpassword' => 'required|string|min:3|',
         ]);
         if ($validator->fails()) {
@@ -84,14 +85,22 @@ class RecoveryController extends Controller
 
         $code = request()->code;
         $pass = request()->newpassword;
-        $rec  = Recovery::where('code', $code)->first();
-        if (!$rec) {
-            return $this->error("Le code $code est incorrect", 200, ['errors_msg' => []]);
-        }
+        // $rec  = Recovery::where('code', $code)->first();
+        // if (!$rec) {
+        //     return $this->error("Le code $code est incorrect", 200, ['errors_msg' => []]);
+        // }
 
-        $rec->user->update(['password' => Hash::make($pass)]);
-        $rec->user->tokens()->delete();
-        $rec->delete();
-        return $this->success(['token' => $rec->user->createToken('token_' . time())->plainTextToken,], "Votre mot de passe a été réinitialisisé.");
+        // $rec->user->update(['password' => Hash::make($pass)]);
+        // $rec->user->tokens()->delete();
+        // $rec->delete();
+        // return $this->success(['token' => $rec->user->createToken('token_' . time())->plainTextToken,], "Votre mot de passe a été réinitialisisé.");
+
+        $user = User::where('phone', request()->phone)->first();
+        if ($user) {
+            $user->update(['password' => Hash::make($pass)]);
+            return $this->success(['token' => $user->createToken('token_' . time())->plainTextToken,], "Votre mot de passe a été réinitialisisé.");
+        } else {
+            return $this->error("Aucun compte trouvé", 200, ['errors_msg' => []]);
+        }
     }
 }
