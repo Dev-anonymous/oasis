@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/categorie-article/{id}', [CategorieArticleController::class, 'destroy']);
 
     ############# ARTICLE
+    Route::get('/article/entreprise/{id}', [ArticleController::class, 'index_ese']); //recupereles les article d'une entreprise
     Route::get('/article', [ArticleController::class, 'index']);
     Route::get('/article/{id}', [ArticleController::class, 'show']);
     Route::post('/article', [ArticleController::class, 'store']);
@@ -84,6 +85,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     #==========   Entreprise   =======#
     Route::get('/entreprise', [EntrepriseController::class, 'index']);
+    Route::get('/entreprise/all', [EntrepriseController::class, 'index_all']); //recuperer toutes les entreprises
     Route::post('/entreprise', [EntrepriseController::class, 'store']);
     Route::get('/entreprise/{entreprise}', [EntrepriseController::class, 'show']);
     Route::delete('/entreprise/{entreprise}', [EntrepriseController::class, 'destroy']);

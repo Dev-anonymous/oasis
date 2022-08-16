@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\CategorieArticle;
+use App\Models\Entreprise;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -33,6 +34,46 @@ class ArticleController extends Controller
             $a->article = $e->article;
             $a->description = $e->description;
             $a->categorie = $e->categorie_article->categorie;
+            $a->entreprise = $e->categorie_article->entreprise->entreprise;
+            $f = $e->image;
+            $a->image = asset('storage/' . $f);
+
+            $user = $e->categorie_article->entreprise->user;
+            $a->user = $user->name;
+            $a->user_image = empty($user->avatar) ? asset('storage/users/default.png') : asset('storage/' . $user->avatar);
+            $a->date = $e->date->format('Y-m-d H:i:s');
+            array_push($tab, $a);
+        }
+        $data = $data->toArray();
+        $data['data'] = $tab;
+        unset($data['total']);
+        unset($data['last_page']);
+        unset($data['links']);
+        unset($data['first_page_url']);
+        unset($data['last_page_url']);
+        unset($data['path']);
+        unset($data['from']);
+        unset($data['to']);
+        return $this->success($data, 'Articles');
+    }
+
+    public function index_ese(Entreprise $id)
+    {
+        $ent = $id;
+
+        $cat = CategorieArticle::where('entreprise_id', $ent->id)->pluck('id')->all();
+        $articles  = Article::whereIn('categorie_article_id', $cat)->orderBy('id', 'desc');
+        $articles = $articles->paginate(20);
+
+        $data = $articles;
+        $tab = [];
+        foreach ($articles as $e) {
+            $a = new stdClass();
+            $a->id = $e->id;
+            $a->article = $e->article;
+            $a->description = $e->description;
+            $a->categorie = $e->categorie_article->categorie;
+            $a->entreprise = $e->categorie_article->entreprise->entreprise;
             $f = $e->image;
             $a->image = asset('storage/' . $f);
 

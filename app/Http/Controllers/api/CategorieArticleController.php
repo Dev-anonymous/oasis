@@ -28,6 +28,7 @@ class CategorieArticleController extends Controller
         $tab = [];
         foreach ($cat as $e) {
             $a = new stdClass();
+            $a->id = $e->id;
             $a->categorie = $e->categorie;
             $a->image = asset('storage/' . $e->image);
             $a->entreprise = $e->entreprise->entreprise;

@@ -34,6 +34,22 @@ class EntrepriseController extends Controller
         return $this->success($data, "Mes entreprises");
     }
 
+    public function index_all()
+    {
+
+        /** @var \App\Models\User $user **/
+        $ent = Entreprise::orderBy('id', 'desc')->get();
+        $data = [];
+
+        foreach ($ent as $el) {
+            $a = (object) $el->toArray();
+            unset($a->users_id);
+            $a->logo = empty($el->logo) ? asset('storage/user/default.png') : asset('storage/' . $el->logo);
+            array_push($data, $a);
+        }
+        return $this->success($data, "Mes entreprises");
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -47,6 +63,10 @@ class EntrepriseController extends Controller
             'adresse' => 'sometimes|max:100',
             'telephone' => 'sometimes|string|min:10|numeric|regex:/(\+)[0-9]{10}/',
             'email' => 'sometimes|email',
+            'description' => 'sometimes|',
+            'localisation' => 'sometimes|',
+            'site_web' => 'sometimes|',
+            'categorie' => 'sometimes|',
             'logo' => 'sometimes|mimes:jpg,png,jpeg,gif|max:300',
         ]);
 
@@ -74,9 +94,9 @@ class EntrepriseController extends Controller
      */
     public function show(Entreprise $entreprise)
     {
-        if ($entreprise->users_id != auth()->user()->id) {
-            abort(404);
-        }
+        // if ($entreprise->users_id != auth()->user()->id) {
+        //     abort(404);
+        // }
 
         $a = (object) $entreprise->toArray();
         unset($a->users_id);

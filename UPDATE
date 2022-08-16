@@ -1,0 +1,2 @@
+Route::get('/entreprise/all', [EntrepriseController::class, 'index_all']);
+Route::get('/article/entreprise/{id}', [ArticleController::class, 'index_ese']);
