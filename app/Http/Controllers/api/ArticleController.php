@@ -153,8 +153,8 @@ class ArticleController extends Controller
             return $this->error('Validation error', 400, ['errors_msg' => $validator->errors()->all()]);
         }
 
-        $cat = CategorieArticle::where(['users_id' => auth()->user()->id, 'id' => request()->categorie_article_id])->first();
-        if (!$cat) {
+        $cat = CategorieArticle::where(['id' => request()->categorie_article_id])->first();
+        if ($cat->entreprise->users_id != auth()->user()->id) {
             abort(403);
         }
 
