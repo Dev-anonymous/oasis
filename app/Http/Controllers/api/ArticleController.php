@@ -32,6 +32,8 @@ class ArticleController extends Controller
             $a = new stdClass();
             $a->id = $e->id;
             $a->article = $e->article;
+            $a->prix = $e->prix;
+            $a->devise = $e->devise->devise;
             $a->description = $e->description;
             $a->categorie = $e->categorie_article->categorie;
             $a->entreprise = $e->categorie_article->entreprise->entreprise;
@@ -71,6 +73,8 @@ class ArticleController extends Controller
             $a = new stdClass();
             $a->id = $e->id;
             $a->article = $e->article;
+            $a->prix = $e->prix;
+            $a->devise = $e->devise->devise;
             $a->description = $e->description;
             $a->categorie = $e->categorie_article->categorie;
             $a->entreprise = $e->categorie_article->entreprise->entreprise;
