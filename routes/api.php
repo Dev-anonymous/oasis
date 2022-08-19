@@ -99,3 +99,4 @@ Route::get('/operateur', [PayementController::class, 'operateur']);
 #==========   Mot de passe oublié   =======#
 Route::post('/recovery', [RecoveryController::class, 'recovery']);
 Route::post('/recovery/check', [RecoveryController::class, 'check']);
+
