@@ -74,7 +74,7 @@ class PanierController extends Controller
             return $this->error('Article non valide', 200, ['errors_msg' => []]);
         }
         $user = auth()->user();
-        if ($article->categorie_article->user->id == $user->id) {
+        if ($article->categorie_article->entreprise->users_id == $user->id) {
             return $this->error('Action non autorisée', 403, ['errors_msg' => ["Vous ne pouvez pas ajouter votre propre article au panier."]]);
         }
 
