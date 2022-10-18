@@ -58,7 +58,7 @@ class RecoveryController extends Controller
                 Recovery::where('users_id', $u->id)->delete();
                 Recovery::create(['date' => now('Africa/Lubumbashi'), 'code' => $code, 'users_id' => $u->id]);
             } catch (\Throwable $th) {
-                return $this->error("Impossible d'envoye le code, veuiller réessayer.", 200, ['errors_msg' => []]);
+                return $this->error("Impossible d'envoyer le code, veuiller réessayer.", 200, ['errors_msg' => []]);
             }
         } else {
             return $this->error("Aucun compte trouvé pour $login", 200, ['errors_msg' => []]);

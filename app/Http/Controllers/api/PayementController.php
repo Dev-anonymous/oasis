@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Approvisionnement;
 use App\Models\Compte;
 use App\Models\Devise;
+use App\Models\Flexpay;
 use App\Models\Operateur;
 use App\Models\Solde;
 use App\Models\Transaction;
@@ -19,6 +20,13 @@ class PayementController extends Controller
 {
     use ApiResponser;
 
+    public function payCallBack($cb_code = null)
+    {
+        if ($cb_code) {
+            Flexpay::where(['is_saved' => 0, 'cb_code' => $cb_code])->update(['callback' => 1]);
+        }
+    }
+
     public function solde($devise = null)
     {
         /** @var \App\Models\User $user **/
@@ -29,7 +37,7 @@ class PayementController extends Controller
         foreach ($solde as $e) {
             array_push($tab, (object) [
                 'devise' => $e->devise->devise,
-                'montant' => (float) $e->montant
+                'montant' =>  number_format($e->montant, 2, '.', ' ')
             ]);
         }
 
@@ -64,6 +72,7 @@ class PayementController extends Controller
                 'operateur_id' => 'required|exists:operateur,id',
                 'devise_id' => 'required|exists:devise,id',
                 'montant' => 'required|numeric|min:1',
+                'telephone' => 'required|min:1|regex:/(243)[0-9]{9}/',
             ]
         );
 
@@ -73,21 +82,56 @@ class PayementController extends Controller
 
         $data = $validator->validated();
         $data['compte_id'] = $compte->id;
-        $data['trans_id'] = $transid = trans_id();
-
-
-        DB::beginTransaction();
-        Transaction::create($data);
-        $solde = $compte->soldes()->where(['devise_id' => $data['devise_id']]);
-        $solde->increment('montant', $data['montant']);
-        DB::commit();
+        $data['trans_id'] = trans_id();
 
         $dev = Devise::where('id', request()->devise_id)->first();
-        $op = Operateur::where('id', request()->operateur_id)->first();
-        $m = request()->montant . ' ' . $dev->devise;
+        $montant = request()->montant;
+        $telephone = request()->telephone;
 
-        $msg = "Vous venez d'approvissionner votre votre d'un montant de $m, par {$op->operateur}. TransID : $transid";
-        return $this->success([], $msg);
+        $ref = strtoupper(uniqid('REF-', true));
+        $cb_code = time() . rand(20000, 90000);
+
+        $_paydata = [
+            'devise' => $dev->devise,
+            'montant' => $montant,
+            'telephone' => $telephone,
+            'trans_data' => $data
+        ];
+        $rep = startFlexPay($dev->devise, $montant, $telephone, $ref, $cb_code);
+        if ($rep['status'] == true) {
+            $tab['ref'] = $ref;
+            $paydata = [
+                'paydata' => $_paydata,
+                'apiresponse' => $rep['data']
+            ];
+            Flexpay::create([
+                'user' => $user,
+                'cb_code' => $cb_code,
+                'ref' => $ref,
+                'pay_data' => json_encode($paydata),
+            ]);
+            return $this->success(['ref' => $ref], $rep['message']);
+        } else {
+            return $this->error($rep['message'], 200);
+        }
+    }
+
+    public function appro_check($ref = null)
+    {
+        if (!$ref) {
+            return $this->error('Ref ?', 400);
+        }
+        $flex = Flexpay::where([
+            'ref' => $ref,
+            'is_saved' => 1
+        ])->first();
+
+        if ($flex) {
+            return $this->success(null, "Votre transaction est enregistrée avec succès.");
+        } else {
+            $m = "Aucune transaction enregistrée. Les transactions avec certains opérateurs peuvent prendre jusqu'à 24h avant d'etre traitées, si le solde de votre compte a été débité, votre transaction sera enregistrée une fois le processus de paiement terminé. Merci.";
+            return $this->error($m, 200);
+        }
     }
 
     public function transfert()

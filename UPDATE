@@ -1,2 +1,13 @@
-Route::get('/entreprise/all', [EntrepriseController::class, 'index_all']);
-Route::get('/article/entreprise/{id}', [ArticleController::class, 'index_ese']);
+Route::post('/appro', [PayementController::class, 'appro']);
+Route::post('/appro-check/{ref?}', [PayementController::class, 'appro_check']);
+
+## pour approvisionner un compte il faut aussi envoyer le champs telephone dans le formulaire avec le numero qui sera utilisé pour la transation 24399...
+## une fois ca passe on va te renvoyer la reference de la transation, au cas ou tu veux verifier l'etat de transation
+
+## une fois la requete passe, si tu veux verifier le status de la transation il faut le faire avec la route /appro-check/NUMERO_REFFRENCE
+
+
+## des que le route /appro passe et que le user a saisi le bon pin de son mobile money, le solde sera incremente automatiquement
+## mais de fois ca peut prendre du temps selon l'operateur
+
+** faut syncroniser la bdd

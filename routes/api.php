@@ -58,6 +58,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     ########### SOLDE & TRANSFERT
     Route::get('/solde/{devise?}', [PayementController::class, 'solde']); //liste solde user
     Route::post('/appro', [PayementController::class, 'appro']); //approvisionner mon compte
+    Route::post('/appro-check/{ref?}', [PayementController::class, 'appro_check']); //verifier la transaction d'approvisionnement
     Route::post('/transfert', [PayementController::class, 'transfert']); //transfert argent vers un compte
     Route::get('/transaction/{limite?}', [PayementController::class, 'transaction']); //liste transaction
     Route::get('/numero-compte', [PayementController::class, 'numero_compte']); //affiche le numero de compte du user
@@ -99,4 +100,3 @@ Route::get('/operateur', [PayementController::class, 'operateur']);
 #==========   Mot de passe oublié   =======#
 Route::post('/recovery', [RecoveryController::class, 'recovery']);
 Route::post('/recovery/check', [RecoveryController::class, 'check']);
-
