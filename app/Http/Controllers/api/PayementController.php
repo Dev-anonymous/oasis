@@ -121,12 +121,25 @@ class PayementController extends Controller
         if (!$ref) {
             return $this->error('Ref ?', 400);
         }
-        $flex = Flexpay::where([
-            'ref' => $ref,
-            'is_saved' => 1
-        ])->first();
 
+        $ok =  false;
+
+        $flex = Flexpay::where(['ref' => $ref])->first();
         if ($flex) {
+            $orderNumber = @json_decode($flex->pay_data)->apiresponse->orderNumber;
+            if ($orderNumber) {
+                $success = transaction_was_success($orderNumber);
+                if ($success) {
+                    if ($flex->is_saved != 1) {
+                        $paydata = json_decode($flex->pay_data);
+                        saveData($paydata, $flex);
+                        $ok =  true;
+                    }
+                }
+            }
+        }
+
+        if ($ok || $flex->is_saved == 1) {
             return $this->success(null, "Votre transaction est enregistrée avec succès.");
         } else {
             $m = "Aucune transaction enregistrée. Les transactions avec certains opérateurs peuvent prendre jusqu'à 24h avant d'etre traitées, si le solde de votre compte a été débité, votre transaction sera enregistrée une fois le processus de paiement terminé. Merci.";

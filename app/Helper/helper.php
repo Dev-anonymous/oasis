@@ -159,17 +159,7 @@ function completeFlexpayTrans()
         $orderNumber = $payedata->apiresponse->orderNumber;
 
         if (transaction_was_success($orderNumber) == true) {
-            $user = User::find(json_decode($e->user)->id);
-            if ($user) {
-                $compte = $user->comptes()->first();
-                $trans_data = (array) $payedata->paydata->trans_data;
-                DB::beginTransaction();
-                Transaction::create($trans_data);
-                $solde = $compte->soldes()->where(['devise_id' => $trans_data['devise_id']]);
-                $solde->increment('montant', $trans_data['montant']);
-                DB::commit();
-                $e->update(['is_saved' => 1]);
-            }
+            saveData($payedata, $e);
         } else {
             $e->update(['transaction_was_failled' => 1]);
         }
@@ -200,4 +190,20 @@ function transaction_was_success($orderNumber)
         }
     }
     return $status;
+}
+
+
+function saveData($payedata, $e)
+{
+    $user = User::find(json_decode($e->user)->id)->first();
+    if ($user) {
+        $compte = $user->comptes()->first();
+        $trans_data = (array) $payedata->paydata->trans_data;
+        DB::beginTransaction();
+        Transaction::create($trans_data);
+        $solde = $compte->soldes()->where(['devise_id' => $trans_data['devise_id']]);
+        $solde->increment('montant', $trans_data['montant']);
+        DB::commit();
+        $e->update(['is_saved' => 1]);
+    }
 }
